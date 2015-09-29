@@ -25,7 +25,7 @@ For API key registration and setup, checkout our [quickstart guide](http://docs.
 
 Full Documentation
 ------------
-Detailed documentation and further code examples are available at [indico.readme.io](http://indico.readme.io/v2.0/docs/python).
+Detailed documentation and further code examples are available at [indico.io/docs](https://indico.io/docs).
 
 Supported APIs:
 ------------

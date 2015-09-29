@@ -31,7 +31,7 @@ Full Documentation
 ------------------
 
 Detailed documentation and further code examples are available at
-`indico.reame.io <http://indico.readme.io/v2.0/docs/python>`__.
+`indico.io/docs <https://indico.io/docs>`__.
 
 Supported APIs:
 ---------------

@@ -1,4 +1,4 @@
-from indicoio.config import TEXT_APIS, IMAGE_APIS, API_NAMES
+from indicoio.config import TEXT_APIS, IMAGE_APIS, API_NAMES, PRIVATE_APIS
 from indicoio.utils.api import api_handler
 from indicoio.utils.image import image_preprocess
 from indicoio.utils.errors import IndicoError
@@ -7,8 +7,8 @@ from indicoio.utils.errors import IndicoError
 CLIENT_SERVER_MAP = dict((api, api.strip().replace("_", "").lower()) for api in API_NAMES)
 SERVER_CLIENT_MAP = dict((v, k) for k, v in CLIENT_SERVER_MAP.items())
 AVAILABLE_APIS = {
-    'text': TEXT_APIS,
-    'image': IMAGE_APIS
+    'text': set(TEXT_APIS+PRIVATE_APIS) - set(PRIVATE_APIS),
+    'image': set(IMAGE_APIS+PRIVATE_APIS) - set(PRIVATE_APIS)
 }
 
 def invert_dictionary(d):
@@ -98,7 +98,7 @@ def handle_response(result):
         for api, res in result.items())
 
 
-def analyze_text(input_text, apis=TEXT_APIS, **kwargs):
+def analyze_text(input_text, apis=AVAILABLE_APIS['text'], **kwargs):
     """
     Given input text, returns the results of specified text apis. Possible apis
     include: [ 'text_tags', 'political', 'sentiment', 'language' ]
@@ -135,7 +135,7 @@ def analyze_text(input_text, apis=TEXT_APIS, **kwargs):
     )
 
 
-def analyze_image(image, apis=IMAGE_APIS, **kwargs):
+def analyze_image(image, apis=AVAILABLE_APIS['image'], **kwargs):
     """
     Given input image, returns the results of specified image apis. Possible apis
     include: ['fer', 'facial_features', 'image_features']

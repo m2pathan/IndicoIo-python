@@ -7,8 +7,10 @@ from requests import ConnectionError
 
 from nose.plugins.skip import Skip, SkipTest
 from six import PY3
+from mock import patch, MagicMock
 
 from indicoio import config
+from indicoio.config import TEXT_APIS, IMAGE_APIS, PRIVATE_APIS
 from indicoio import political, sentiment, fer, facial_features, facial_localization, content_filtering, language, image_features, text_tags
 from indicoio import batch_political, batch_sentiment, batch_fer, batch_content_filtering, batch_facial_features
 from indicoio import batch_language, batch_image_features, batch_text_tags
@@ -17,7 +19,14 @@ from indicoio import sentiment_hq, batch_sentiment_hq
 from indicoio import twitter_engagement, batch_twitter_engagement
 from indicoio import named_entities, batch_named_entities
 from indicoio import intersections, analyze_image, analyze_text, batch_analyze_image, batch_analyze_text
+from indicoio import labels
 from indicoio.utils.errors import IndicoError
+
+TEXT_APIS = set(TEXT_APIS+PRIVATE_APIS) - set(PRIVATE_APIS)
+IMAGE_APIS = set(IMAGE_APIS+PRIVATE_APIS) - set(PRIVATE_APIS)
+
+mock_response = MagicMock()
+mock_response.status_code = 200
 
 DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -165,25 +174,25 @@ class BatchAPIRun(unittest.TestCase):
     def test_batch_multi_api_image(self):
         test_data = [os.path.normpath(os.path.join(DIR, "data/48by48.png")),
                      os.path.normpath(os.path.join(DIR, "data/48by48.png"))]
-        response = analyze_image(test_data, apis=config.IMAGE_APIS, api_key=self.api_key)
+        response = analyze_image(test_data, apis=IMAGE_APIS, api_key=self.api_key)
 
         self.assertTrue(isinstance(response, dict))
-        self.assertTrue(set(response.keys()) == set(config.IMAGE_APIS))
+        self.assertTrue(set(response.keys()) == set(IMAGE_APIS))
         self.assertTrue(isinstance(response["fer"], list))
 
     def test_batch_multi_api_text(self):
         test_data = ['clearly an english sentence']
-        response = analyze_text(test_data, apis=config.TEXT_APIS, api_key=self.api_key)
+        response = analyze_text(test_data, apis=TEXT_APIS, api_key=self.api_key)
 
         self.assertTrue(isinstance(response, dict))
-        self.assertTrue(set(response.keys()) == set(config.TEXT_APIS))
+        self.assertTrue(set(response.keys()) == set(TEXT_APIS))
 
     def test_default_multi_api_text(self):
         test_data = ['clearly an english sentence']
         response = analyze_text(test_data, api_key=self.api_key)
 
         self.assertTrue(isinstance(response, dict))
-        self.assertTrue(set(response.keys()) == set(config.TEXT_APIS))
+        self.assertTrue(set(response.keys()) == set(TEXT_APIS))
 
     def test_multi_api_bad_api(self):
         self.assertRaises(IndicoError,
@@ -471,17 +480,17 @@ class FullAPIRun(unittest.TestCase):
 
     def test_multi_api_image(self):
         test_data = os.path.normpath(os.path.join(DIR, "data/48by48.png"))
-        response = analyze_image(test_data, apis=config.IMAGE_APIS, api_key=self.api_key)
+        response = analyze_image(test_data, apis=IMAGE_APIS, api_key=self.api_key)
 
         self.assertTrue(isinstance(response, dict))
-        self.assertTrue(set(response.keys()) == set(config.IMAGE_APIS))
+        self.assertTrue(set(response.keys()) == set(IMAGE_APIS))
 
     def test_multi_api_text(self):
         test_data = 'clearly an english sentence'
-        response = analyze_text(test_data, apis=config.TEXT_APIS, api_key=self.api_key)
+        response = analyze_text(test_data, apis=TEXT_APIS, api_key=self.api_key)
 
         self.assertTrue(isinstance(response, dict))
-        self.assertTrue(set(response.keys()) == set(config.TEXT_APIS))
+        self.assertTrue(set(response.keys()) == set(TEXT_APIS))
 
     def test_intersections_not_enough_data(self):
         test_data = ['test_Data']
@@ -564,6 +573,25 @@ class FullAPIRun(unittest.TestCase):
         language_dict = language('clearly an english sentence')
         self.assertEqual(language_set, set(language_dict.keys()))
         assert language_dict['English'] > 0.25
+
+    def test_self_train_classifier(self):
+        try:
+            response = labels()
+            self.assertTrue(isinstance(response, dict))
+            for value in response.values():
+                self.assertTrue(isinstance(value, dict))
+                self.assertTrue("type" in values.keys())
+                self.assertTrue("number_of_samples" in values.keys())
+                self.assertTrue("mean_error" in values.keys())
+
+            with patch('indicoio.utils.api.requests.post', MagicMock(return_value=mock_response)):
+                from indicoio import train
+                train('Machine learning is fun!', score='ML')
+                train('Machine learning is fun!', score=.5)
+
+        except IndicoError as e:
+            self.assertEqual(str(e), "Api 'labels' is only available on private cloud")
+            self.skipTest("Skipping self train classifier tests")
 
     def test_set_cloud(self):
         test_data = 'clearly an english sentence'

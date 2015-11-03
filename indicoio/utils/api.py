@@ -10,7 +10,7 @@ from indicoio.utils.errors import IndicoError
 from indicoio import JSON_HEADERS
 from indicoio import config
 
-def api_handler(arg, cloud, api, url_params=None, **kwargs):
+def api_handler(arg, cloud, api, url_params=None, private=False, **kwargs):
     """
     Sends finalized request data to ML server and receives response.
     """
@@ -25,6 +25,9 @@ def api_handler(arg, cloud, api, url_params=None, **kwargs):
     cloud = cloud or config.cloud
     host = "%s.indico.domains" % cloud if cloud else config.PUBLIC_API_HOST
 
+    if not cloud and private:
+        raise IndicoError("Api '%s' is only available on private cloud" % (api))
+
     url = create_url(host, api, dict(kwargs, **url_params))
     response = requests.post(url, data=json_data, headers=JSON_HEADERS)
 
@@ -34,7 +37,7 @@ def api_handler(arg, cloud, api, url_params=None, **kwargs):
 
     if response.status_code == 503 and cloud != None:
         raise IndicoError("Private cloud '%s' does not include api '%s'" % (cloud, api))
-        
+
     json_results = response.json()
     results = json_results.get('results', False)
     if results is False:

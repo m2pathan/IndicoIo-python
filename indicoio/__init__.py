@@ -17,6 +17,7 @@ from indicoio.text.lang import language
 from indicoio.text.tagging import text_tags
 from indicoio.text.keywords import keywords
 from indicoio.text.ner import named_entities
+from indicoio.text.self_train_classifier import train, labels
 from indicoio.images.fer import fer
 from indicoio.images.features import facial_features, image_features
 from indicoio.images.faciallocalization import facial_localization
@@ -39,7 +40,7 @@ def deprecation_decorator(f, api):
 def detect_batch_decorator(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
-        if isinstance(args[0], list):
+        if len(args) > 0 and isinstance(args[0], list):
             kwargs['batch'] = True
         return f(*args, **kwargs)
     return wrapper

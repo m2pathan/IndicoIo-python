@@ -19,7 +19,7 @@ from indicoio import sentiment_hq, batch_sentiment_hq
 from indicoio import twitter_engagement, batch_twitter_engagement
 from indicoio import named_entities, batch_named_entities
 from indicoio import intersections, analyze_image, analyze_text, batch_analyze_image, batch_analyze_text
-from indicoio import labels
+from indicoio import labels, predict
 from indicoio.utils.errors import IndicoError
 
 TEXT_APIS = set(TEXT_APIS+PRIVATE_APIS) - set(PRIVATE_APIS)
@@ -576,18 +576,28 @@ class FullAPIRun(unittest.TestCase):
 
     def test_self_train_classifier(self):
         try:
-            response = labels()
-            self.assertTrue(isinstance(response, dict))
-            for value in response.values():
+            labels_dict = labels()
+            self.assertTrue(isinstance(labels_dict, dict))
+            for value in labels_dict.values():
                 self.assertTrue(isinstance(value, dict))
                 self.assertTrue("type" in values.keys())
                 self.assertTrue("number_of_samples" in values.keys())
                 self.assertTrue("mean_error" in values.keys())
 
             with patch('indicoio.utils.api.requests.post', MagicMock(return_value=mock_response)):
-                from indicoio import train
+                from indicoio import train, clear_label, remove_example
                 train('Machine learning is fun!', score='ML')
                 train('Machine learning is fun!', score=.5)
+                clear_label(labels_dict.values()[0])
+                remove_example(labels_dict.values()[0], id='1')
+                remove_example(labels_dict.values()[0], text='Machine learning is fun!')
+
+            text = "I am Sam. Sam I am."
+            prediction = predict(text)
+            self.assertTrue(isinstance(prediction, float) or isinstance(prediction, str))
+            predictions = indicoio.predict(text, sentences=True)
+            self.assertTrue(isinstance(predictions, dict))
+            self.assertEqual(len(predictions.keys()), 2)
 
         except IndicoError as e:
             self.assertEqual(str(e), "Api 'labels' is only available on private cloud")

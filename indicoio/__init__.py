@@ -17,7 +17,7 @@ from indicoio.text.lang import language
 from indicoio.text.tagging import text_tags
 from indicoio.text.keywords import keywords
 from indicoio.text.ner import named_entities
-from indicoio.text.self_train_classifier import train, labels
+from indicoio.text.self_train_classifier import train, labels, predict, clear_label, remove_example
 from indicoio.images.fer import fer
 from indicoio.images.features import facial_features, image_features
 from indicoio.images.faciallocalization import facial_localization

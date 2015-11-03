@@ -62,12 +62,18 @@ TEXT_APIS = [
     'named_entities',
     'twitter_engagement',
     'labels',
-    'train'
+    'train',
+    'predict',
+    'clear_label',
+    'remove_example'
 ]
 
 PRIVATE_APIS = [
     'labels',
-    'train'
+    'train',
+    'predict',
+    'clear_label',
+    'remove_example'
 ]
 
 IMAGE_APIS = [

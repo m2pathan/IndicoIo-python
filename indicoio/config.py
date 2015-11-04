@@ -61,18 +61,18 @@ TEXT_APIS = [
     'keywords',
     'named_entities',
     'twitter_engagement',
-    'labels',
-    'train',
+    'collections',
+    'add_data',
     'predict',
-    'clear_label',
+    'clear_collection',
     'remove_example'
 ]
 
 PRIVATE_APIS = [
-    'labels',
-    'train',
+    'collections',
+    'add_data',
     'predict',
-    'clear_label',
+    'clear_collection',
     'remove_example'
 ]
 

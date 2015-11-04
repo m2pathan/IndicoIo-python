@@ -1,16 +1,16 @@
 from indicoio.utils.api import api_handler
 
-def train(text, score, cloud=None, batch=False, api_key=None, version=None, **kwargs):
+def add_data(data, cloud=None, batch=False, api_key=None, version=None, **kwargs):
     """
     This is the basic training endpoint. Given a piece of text and a score, either categorical
     or numeric, this endpoint will train a new model given the additional piece of information.
 
     Inputs
-    text - String: The text example being provided to the API. The length of this string should ideally
+    data - List: The text and collection/score associated with it. The length of the text (string) should ideally
       be longer than 100 characters and contain at least 10 words. While the API will support
       shorter text, you will find that the accuracy of results improves significantly with longer
-      examples. For an additional fee, this end point will support image input as well.
-    score - String | Float: This is the variable associated with the text. This can either be categorical
+      examples. For an additional fee, this end point will support image input as well. The collection/score
+      can be a string or float. This is the variable associated with the text. This can either be categorical
       (the tag associated with the post) or numeric (the number of Facebook shares the post
       received). However it can only be one or another within a given label.
     id (optional) - String: This is a unique ID associated with the given piece of text. This can be
@@ -33,15 +33,15 @@ def train(text, score, cloud=None, batch=False, api_key=None, version=None, **kw
     .. code-block:: python
 
        >>> text = "London Underground's boss Mike Brown warned that the strike ..."
-       >>> indicoio.train(text, .5)
+       >>> indicoio.train([text, .5])
     """
-    kwargs['score'] = score
+    batch = isinstance(data[0], list)
     url_params = {"batch": batch, "api_key": api_key, "version": version}
-    return api_handler(text, cloud=cloud, api="train", url_params=url_params, private=True, **kwargs)
+    return api_handler(data, cloud=cloud, api="add_data", url_params=url_params, private=True, **kwargs)
 
-def labels(cloud=None, api_key=None, version=None, **kwargs):
+def collections(cloud=None, api_key=None, version=None, **kwargs):
     """
-    This is a status report endpoint. It is used to get the status on all of the labels currently trained, as
+    This is a status report endpoint. It is used to get the status on all of the collections currently trained, as
     well as some basic statistics on their accuracies.
 
     Inputs
@@ -56,7 +56,7 @@ def labels(cloud=None, api_key=None, version=None, **kwargs):
 
     .. code-block:: python
 
-       >>> labels = indicoio.labels()
+       >>> collections = indicoio.collections()
       {
         "tag_predictor": {
           "type": "categorical",
@@ -68,7 +68,7 @@ def labels(cloud=None, api_key=None, version=None, **kwargs):
       }
     """
     url_params = {"batch": False, "api_key": api_key, "version": version}
-    return api_handler(None, cloud=cloud, api="labels", url_params=url_params, private=True, **kwargs)
+    return api_handler(None, cloud=cloud, api="collections", url_params=url_params, private=True, **kwargs)
 
 def predict(text, cloud=None, batch=False, api_key=None, version=None, **kwargs):
     """
@@ -109,15 +109,15 @@ def predict(text, cloud=None, batch=False, api_key=None, version=None, **kwargs)
     url_params = {"batch": batch, "api_key": api_key, "version": version}
     return api_handler(text, cloud=cloud, api="predict", url_params=url_params, private=True, **kwargs)
 
-def clear_label(label, cloud=None, api_key=None, version=None, **kwargs):
+def clear_collection(colletion, cloud=None, api_key=None, version=None, **kwargs):
     """
-    This is an API made to remove all of the data associated from a given label. If there's been a data
+    This is an API made to remove all of the data associated from a given colletion. If there's been a data
     corruption issue, or a large amount of incorrect data has been fed into the API it is often difficult
-    to correct. This allows you to clear a label and start from scratch. Use with caution! This is not
+    to correct. This allows you to clear a colletion and start from scratch. Use with caution! This is not
     reversible.
 
     Inputs
-    label - String: the label from which you wish to remove the specified text.
+    colletion - String: the colletion from which you wish to remove the specified text.
     api_key (optional) - String: Your API key, required only if the key has not been declared
       elsewhere. This allows the API to recognize a request as yours and automatically route it
       to the appropriate destination.
@@ -129,14 +129,14 @@ def clear_label(label, cloud=None, api_key=None, version=None, **kwargs):
 
     .. code-block:: python
 
-      >>> indicoio.clear_label("popularity_predictor")
+      >>> indicoio.clear_colletion("popularity_predictor")
 
     """
-    kwargs['label'] = label
+    kwargs['collection'] = collection
     url_params = {"batch": False, "api_key": api_key, "version": version}
-    return api_handler(None, cloud=cloud, api="remove_example", url_params=url_params, private=True, **kwargs)
+    return api_handler(None, cloud=cloud, api="clear_collection", url_params=url_params, private=True, **kwargs)
 
-def remove_example(label, cloud=None, batch=False, api_key=None, version=None, **kwargs):
+def remove_example(collection, cloud=None, batch=False, api_key=None, version=None, **kwargs):
     """
     This is an API made to remove a single instance of training data. This is useful in cases where a
     single instance of content has been modified, but the remaining examples remain valid. For
@@ -146,10 +146,10 @@ def remove_example(label, cloud=None, batch=False, api_key=None, version=None, *
     id (optional) - String: The unique identifier of the piece of text you wish to remove. This is the
       same id provided above in the train API. This must be provided if text is not, and viceversa.
       text (optional)
-    text (optional) - String: The exact text you wish to remove from the given label. If the string
+    text (optional) - String: The exact text you wish to remove from the given collection. If the string
       provided does not match a known piece of text then this will fail. Again, this is required if
       an id is not provided, and vice-versa.
-    label - String: the label from which you wish to remove the specified text.
+    collection - String: the collection from which you wish to remove the specified text.
     api_key (optional) - String: Your API key, required only if the key has not been declared
       elsewhere. This allows the API to recognize a request as yours and automatically route it
       to the appropriate destination.
@@ -161,11 +161,11 @@ def remove_example(label, cloud=None, batch=False, api_key=None, version=None, *
 
     .. code-block:: python
 
-      >>> indicoio.remove_example(id="user202", label="popularity_predictor")
+      >>> indicoio.remove_example(id="user202", collection="popularity_predictor")
       >>> indicoio.remove_example(text="I am Sam. Sam I am.", lablel="popularity_predictor")
 
     """
-    kwargs['label'] = label
+    kwargs['collection'] = collection
     batch = isinstance((kwargs['text'] if 'text' in kwargs else kwargs['id']), list)
     url_params = {"batch": batch, "api_key": api_key, "version": version}
     return api_handler(None, cloud=cloud, api="remove_example", url_params=url_params, private=True, **kwargs)

@@ -19,7 +19,7 @@ from indicoio import sentiment_hq, batch_sentiment_hq
 from indicoio import twitter_engagement, batch_twitter_engagement
 from indicoio import named_entities, batch_named_entities
 from indicoio import intersections, analyze_image, analyze_text, batch_analyze_image, batch_analyze_text
-from indicoio import labels, predict
+from indicoio import collections, predict
 from indicoio.utils.errors import IndicoError
 
 TEXT_APIS = [api for api in TEXT_APIS if api not in PRIVATE_APIS]
@@ -576,20 +576,20 @@ class FullAPIRun(unittest.TestCase):
 
     def test_self_train_classifier(self):
         try:
-            labels_dict = labels()
-            self.assertTrue(isinstance(labels_dict, dict))
+            collections_dict = collections()
+            self.assertTrue(isinstance(collections_dict, dict))
             for value in labels_dict.values():
                 self.assertTrue(isinstance(value, dict))
                 self.assertTrue("type" in values.keys())
                 self.assertTrue("number_of_samples" in values.keys())
 
             with patch('indicoio.utils.api.requests.post', MagicMock(return_value=mock_response)):
-                from indicoio import train, clear_label, remove_example
-                train('Machine learning is fun!', score='ML')
-                train('Machine learning is fun!', score=.5)
-                clear_label(labels_dict.values()[0])
-                remove_example(id='1', label=labels_dict.values()[0])
-                remove_example(text='Machine learning is fun!', label=labels_dict.values()[0])
+                from indicoio import add_data, clear_collection, remove_example
+                add_data(['Machine learning is fun!', 'ML'])
+                add_data(['Machine learning is fun!', .5])
+                clear_collection(collections_dict.values()[0])
+                remove_example(id='1', collection=collections_dict.values()[0])
+                remove_example(text='Machine learning is fun!', collection=collections_dict.values()[0])
 
             text = "I am Sam. Sam I am."
             prediction = predict(text)
@@ -599,7 +599,7 @@ class FullAPIRun(unittest.TestCase):
             self.assertEqual(len(predictions.keys()), 2)
 
         except IndicoError as e:
-            self.assertEqual(str(e), "Api 'labels' is only available on private cloud")
+            self.assertEqual(str(e), "Api 'collections' is only available on private cloud")
             self.skipTest("Skipping self train classifier tests")
 
     def test_set_cloud(self):

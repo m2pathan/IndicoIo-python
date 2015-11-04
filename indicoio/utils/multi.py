@@ -7,8 +7,8 @@ from indicoio.utils.errors import IndicoError
 CLIENT_SERVER_MAP = dict((api, api.strip().replace("_", "").lower()) for api in API_NAMES)
 SERVER_CLIENT_MAP = dict((v, k) for k, v in CLIENT_SERVER_MAP.items())
 AVAILABLE_APIS = {
-    'text': set(TEXT_APIS+PRIVATE_APIS) - set(PRIVATE_APIS),
-    'image': set(IMAGE_APIS+PRIVATE_APIS) - set(PRIVATE_APIS)
+    'text': [api for api in TEXT_APIS if api not in PRIVATE_APIS],
+    'image': [api for api in IMAGE_APIS if api not in PRIVATE_APIS]
 }
 
 def invert_dictionary(d):

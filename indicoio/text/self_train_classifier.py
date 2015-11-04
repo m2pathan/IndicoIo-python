@@ -1,6 +1,6 @@
 from indicoio.utils.api import api_handler
 
-def train(text, cloud=None, batch=False, api_key=None, version=None, **kwargs):
+def train(text, score, cloud=None, batch=False, api_key=None, version=None, **kwargs):
     """
     This is the basic training endpoint. Given a piece of text and a score, either categorical
     or numeric, this endpoint will train a new model given the additional piece of information.
@@ -35,6 +35,7 @@ def train(text, cloud=None, batch=False, api_key=None, version=None, **kwargs):
        >>> text = "London Underground's boss Mike Brown warned that the strike ..."
        >>> indicoio.train(text, .5)
     """
+    kwargs['score'] = score
     url_params = {"batch": batch, "api_key": api_key, "version": version}
     return api_handler(text, cloud=cloud, api="train", url_params=url_params, private=True, **kwargs)
 
@@ -59,12 +60,10 @@ def labels(cloud=None, api_key=None, version=None, **kwargs):
       {
         "tag_predictor": {
           "type": "categorical",
-          "number_of_samples": 224,
-          "accuracy": 0.34
+          "number_of_samples": 224
         }, "popularity_predictor": {
           "type": "regression",
-          "number_of_samples": 231,
-          "mean_error": 21.2
+          "number_of_samples": 231
         }
       }
     """
@@ -112,9 +111,10 @@ def predict(text, cloud=None, batch=False, api_key=None, version=None, **kwargs)
 
 def clear_label(label, cloud=None, api_key=None, version=None, **kwargs):
     """
-    This is an API made to remove a single instance of training data. This is useful in cases where a
-    single instance of content has been modified, but the remaining examples remain valid. For
-    example, if a piece of content has been retagged.
+    This is an API made to remove all of the data associated from a given label. If there's been a data
+    corruption issue, or a large amount of incorrect data has been fed into the API it is often difficult
+    to correct. This allows you to clear a label and start from scratch. Use with caution! This is not
+    reversible.
 
     Inputs
     label - String: the label from which you wish to remove the specified text.
@@ -132,8 +132,9 @@ def clear_label(label, cloud=None, api_key=None, version=None, **kwargs):
       >>> indicoio.clear_label("popularity_predictor")
 
     """
+    kwargs['label'] = label
     url_params = {"batch": False, "api_key": api_key, "version": version}
-    return api_handler(label, cloud=cloud, api="remove_example", url_params=url_params, private=True, **kwargs)
+    return api_handler(None, cloud=cloud, api="remove_example", url_params=url_params, private=True, **kwargs)
 
 def remove_example(label, cloud=None, batch=False, api_key=None, version=None, **kwargs):
     """
@@ -160,10 +161,11 @@ def remove_example(label, cloud=None, batch=False, api_key=None, version=None, *
 
     .. code-block:: python
 
-      >>> indicoio.remove_example("popularity_predictor", id="user202")
-      >>> indicoio.remove_example("popularity_predictor", text="I am Sam. Sam I am.")
+      >>> indicoio.remove_example(id="user202", label="popularity_predictor")
+      >>> indicoio.remove_example(text="I am Sam. Sam I am.", lablel="popularity_predictor")
 
     """
+    kwargs['label'] = label
     batch = isinstance((kwargs['text'] if 'text' in kwargs else kwargs['id']), list)
     url_params = {"batch": batch, "api_key": api_key, "version": version}
-    return api_handler(label, cloud=cloud, api="remove_example", url_params=url_params, private=True, **kwargs)
+    return api_handler(None, cloud=cloud, api="remove_example", url_params=url_params, private=True, **kwargs)

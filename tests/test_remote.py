@@ -22,8 +22,8 @@ from indicoio import intersections, analyze_image, analyze_text, batch_analyze_i
 from indicoio import labels, predict
 from indicoio.utils.errors import IndicoError
 
-TEXT_APIS = set(TEXT_APIS+PRIVATE_APIS) - set(PRIVATE_APIS)
-IMAGE_APIS = set(IMAGE_APIS+PRIVATE_APIS) - set(PRIVATE_APIS)
+TEXT_APIS = [api for api in TEXT_APIS if api not in PRIVATE_APIS]
+IMAGE_APIS = [api for api in IMAGE_APIS if api not in PRIVATE_APIS]
 
 mock_response = MagicMock()
 mock_response.status_code = 200
@@ -582,15 +582,14 @@ class FullAPIRun(unittest.TestCase):
                 self.assertTrue(isinstance(value, dict))
                 self.assertTrue("type" in values.keys())
                 self.assertTrue("number_of_samples" in values.keys())
-                self.assertTrue("mean_error" in values.keys())
 
             with patch('indicoio.utils.api.requests.post', MagicMock(return_value=mock_response)):
                 from indicoio import train, clear_label, remove_example
                 train('Machine learning is fun!', score='ML')
                 train('Machine learning is fun!', score=.5)
                 clear_label(labels_dict.values()[0])
-                remove_example(labels_dict.values()[0], id='1')
-                remove_example(labels_dict.values()[0], text='Machine learning is fun!')
+                remove_example(id='1', label=labels_dict.values()[0])
+                remove_example(text='Machine learning is fun!', label=labels_dict.values()[0])
 
             text = "I am Sam. Sam I am."
             prediction = predict(text)

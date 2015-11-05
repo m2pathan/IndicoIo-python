@@ -4,6 +4,8 @@ import unittest
 import os, random
 from PIL import Image
 from requests import ConnectionError
+import re
+import json
 
 from nose.plugins.skip import Skip, SkipTest
 from six import PY3
@@ -21,12 +23,14 @@ from indicoio import named_entities, batch_named_entities
 from indicoio import intersections, analyze_image, analyze_text, batch_analyze_image, batch_analyze_text
 from indicoio import collections, predict
 from indicoio.utils.errors import IndicoError
+from indicoio import JSON_HEADERS
 
 TEXT_APIS = [api for api in TEXT_APIS if api not in PRIVATE_APIS]
 IMAGE_APIS = [api for api in IMAGE_APIS if api not in PRIVATE_APIS]
 
 mock_response = MagicMock()
 mock_response.status_code = 200
+mock_response.headers = {}
 
 DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -583,15 +587,33 @@ class FullAPIRun(unittest.TestCase):
                 self.assertTrue("type" in values.keys())
                 self.assertTrue("number_of_samples" in values.keys())
 
-            with patch('indicoio.utils.api.requests.post', MagicMock(return_value=mock_response)):
-                from indicoio import add_data, clear_collection, remove_example
-                add_data(['Machine learning is fun!', 'ML'])
-                add_data(['Machine learning is fun!', .5])
-                clear_collection(collections_dict.values()[0])
-                remove_example(id='1', collection=collections_dict.values()[0])
-                remove_example(text='Machine learning is fun!', collection=collections_dict.values()[0])
-
             text = "I am Sam. Sam I am."
+
+            mocked_request = MagicMock(return_value=mock_response)
+            with patch('indicoio.utils.api.requests.post', mocked_request):
+                from indicoio import add_data, clear_collection, remove_example
+                class AnyStringWith(str):
+                    def __eq__(self, other):
+                        return self in other
+                add_data([text, 'ML'])
+                json_data = json.dumps({'data': [text, 'ML']})
+                mocked_request.assert_called_with(AnyStringWith('/add_data?'), data=json_data, headers=JSON_HEADERS)
+                add_data([text, .5])
+                json_data = json.dumps({'data': [text, .5]})
+                mocked_request.assert_called_with(AnyStringWith('/add_data?'), data=json_data, headers=JSON_HEADERS)
+
+                clear_collection('collection')
+                json_data = json.dumps({'data': None, 'collection': 'collection'})
+                mocked_request.assert_called_with(AnyStringWith('/clear_collection?'), data=json_data, headers=JSON_HEADERS)
+
+                remove_example(id='1', collection='collection')
+                json_data = json.dumps({'data': None, 'collection': 'collection', 'id':'1'})
+                mocked_request.assert_called_with(AnyStringWith('/remove_example?'), data=json_data, headers=JSON_HEADERS)
+                remove_example(text=text, collection='collection')
+                json_data = json.dumps({'data': None, 'collection': 'collection', 'text':  text})
+                mocked_request.assert_called_with(AnyStringWith('/remove_example?'), data=json_data, headers=JSON_HEADERS)
+
+
             prediction = predict(text)
             self.assertTrue(isinstance(prediction, float) or isinstance(prediction, str))
             predictions = indicoio.predict(text, sentences=True)
@@ -599,7 +621,7 @@ class FullAPIRun(unittest.TestCase):
             self.assertEqual(len(predictions.keys()), 2)
 
         except IndicoError as e:
-            self.assertEqual(str(e), "Api 'collections' is only available on private cloud")
+            self.assertTrue("'collections'" in str(e))
             self.skipTest("Skipping self train classifier tests")
 
     def test_set_cloud(self):

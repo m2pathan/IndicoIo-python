@@ -109,7 +109,7 @@ def predict(text, cloud=None, batch=False, api_key=None, version=None, **kwargs)
     url_params = {"batch": batch, "api_key": api_key, "version": version}
     return api_handler(text, cloud=cloud, api="predict", url_params=url_params, private=True, **kwargs)
 
-def clear_collection(colletion, cloud=None, api_key=None, version=None, **kwargs):
+def clear_collection(collection, cloud=None, api_key=None, version=None, **kwargs):
     """
     This is an API made to remove all of the data associated from a given colletion. If there's been a data
     corruption issue, or a large amount of incorrect data has been fed into the API it is often difficult

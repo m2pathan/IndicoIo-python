@@ -4,7 +4,6 @@ import unittest
 import os, random
 from PIL import Image
 from requests import ConnectionError
-import re
 import json
 
 from nose.plugins.skip import Skip, SkipTest

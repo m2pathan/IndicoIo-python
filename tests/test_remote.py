@@ -75,6 +75,42 @@ class BatchAPIRun(unittest.TestCase):
         response = political(test_data, api_key=self.api_key)
         self.assertTrue(isinstance(response, list))
 
+    def test_batch_self_train_classifier(self):
+        try:
+            collections_dict = collections()
+
+            text = ["I am Sam. Sam I am."]*2
+
+            mocked_request = MagicMock(return_value=mock_response)
+            with patch('indicoio.utils.api.requests.post', mocked_request):
+                from indicoio import add_data, clear_collection, remove_example
+                class AnyStringWith(str):
+                    def __eq__(self, other):
+                        return self in other
+                add_data([['test', 'ML'], ['test2', 'not ML']])
+                json_data = json.dumps({'data': [['test', 'ML'], ['test2', 'not ML']]})
+                mocked_request.assert_called_with(AnyStringWith('/add_data/batch?'), data=json_data, headers=JSON_HEADERS)
+                add_data([['test', .5], ['test2', .1]])
+                json_data = json.dumps({'data': [['test', .5], ['test2', .1]]})
+                mocked_request.assert_called_with(AnyStringWith('/add_data/batch?'), data=json_data, headers=JSON_HEADERS)
+
+                remove_example(id=['1', '2'], collection='collection')
+                json_data = json.dumps({'data': None, 'collection': 'collection', 'id':['1', '2']})
+                mocked_request.assert_called_with(AnyStringWith('/remove_example/batch?'), data=json_data, headers=JSON_HEADERS)
+                remove_example(text=text, collection='collection')
+                json_data = json.dumps({'data': None, 'collection': 'collection', 'text':  text})
+                mocked_request.assert_called_with(AnyStringWith('/remove_example/batch?'), data=json_data, headers=JSON_HEADERS)
+
+            prediction = predict(text)
+            self.assertTrue(isinstance(prediction, float) or isinstance(prediction, str))
+            predictions = indicoio.predict(text, sentences=True)
+            self.assertTrue(isinstance(predictions, dict))
+            self.assertEqual(len(predictions.keys()), 2)
+
+        except IndicoError as e:
+            self.assertTrue("'collections'" in str(e))
+            self.skipTest("Skipping self train classifier tests")
+
     def test_url_support(self):
         test_url = "https://s3-us-west-2.amazonaws.com/indico-test-data/face.jpg"
         response = fer(test_url, api_key=self.api_key)
@@ -612,7 +648,6 @@ class FullAPIRun(unittest.TestCase):
                 remove_example(text=text, collection='collection')
                 json_data = json.dumps({'data': None, 'collection': 'collection', 'text':  text})
                 mocked_request.assert_called_with(AnyStringWith('/remove_example?'), data=json_data, headers=JSON_HEADERS)
-
 
             prediction = predict(text)
             self.assertTrue(isinstance(prediction, float) or isinstance(prediction, str))

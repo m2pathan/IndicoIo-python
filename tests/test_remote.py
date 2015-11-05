@@ -616,6 +616,7 @@ class FullAPIRun(unittest.TestCase):
     def test_self_train_classifier(self):
         try:
             collections_dict = collections()
+            print collections_dict
             self.assertTrue(isinstance(collections_dict, dict))
             for value in labels_dict.values():
                 self.assertTrue(isinstance(value, dict))
@@ -655,6 +656,7 @@ class FullAPIRun(unittest.TestCase):
             self.assertEqual(len(predictions.keys()), 2)
 
         except IndicoError as e:
+            print e
             self.assertTrue("'collections'" in str(e))
             self.skipTest("Skipping self train classifier tests")
 

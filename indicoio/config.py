@@ -100,5 +100,5 @@ SETTINGS = Settings(files=[
 
 api_key = SETTINGS.api_key()
 cloud = SETTINGS.cloud()
-PUBLIC_API_HOST = 'apiv2.indico.io'
-url_protocol = "https:"
+PUBLIC_API_HOST = 'localhost:8000'#'apiv2.indico.io'
+url_protocol = "http:"

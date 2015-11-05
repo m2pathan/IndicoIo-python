@@ -25,8 +25,8 @@ def api_handler(arg, cloud, api, url_params=None, private=False, **kwargs):
     cloud = cloud or config.cloud
     host = "%s.indico.domains" % cloud if cloud else config.PUBLIC_API_HOST
 
-    if not cloud and private:
-        raise IndicoError("Api '%s' is only available on private cloud" % (api))
+    # if not cloud and private:
+    #     raise IndicoError("Api '%s' is only available on private cloud" % (api))
 
     url = create_url(host, api, dict(kwargs, **url_params))
     response = requests.post(url, data=json_data, headers=JSON_HEADERS)

@@ -68,7 +68,7 @@ def collections(cloud=None, api_key=None, version=None, **kwargs):
       }
     """
     url_params = {"batch": False, "api_key": api_key, "version": version}
-    return api_handler(None, cloud=cloud, api="collections", url_params=url_params, private=True, **kwargs)
+    return api_handler(None, cloud=cloud, api="training/collections", url_params=url_params, private=True, **kwargs)
 
 def predict(text, cloud=None, batch=False, api_key=None, version=None, **kwargs):
     """

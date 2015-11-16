@@ -2,6 +2,7 @@ from indicoio.config import TEXT_APIS, IMAGE_APIS, API_NAMES
 from indicoio.utils.api import api_handler
 from indicoio.utils.image import image_preprocess
 from indicoio.utils.errors import IndicoError
+from indicoio.utils.decorators import detect_batch_decorator
 
 
 CLIENT_SERVER_MAP = dict((api, api.strip().replace("_", "").lower()) for api in API_NAMES)
@@ -20,6 +21,7 @@ def invert_dictionary(d):
 API_TYPES = invert_dictionary(AVAILABLE_APIS)
 
 
+@detect_batch_decorator
 def intersections(data, apis = None, **kwargs):
     """
     Helper to make multi requests of different types.
@@ -55,6 +57,7 @@ def intersections(data, apis = None, **kwargs):
     }
 
     return api_handler(data, cloud=cloud, api="apis/intersections", url_params=url_params, **kwargs)
+
 
 def multi(data, datatype, apis, batch=False, **kwargs):
     """
@@ -98,6 +101,7 @@ def handle_response(result):
         for api, res in result.items())
 
 
+@detect_batch_decorator
 def analyze_text(input_text, apis=TEXT_APIS, **kwargs):
     """
     Given input text, returns the results of specified text apis. Possible apis
@@ -135,6 +139,7 @@ def analyze_text(input_text, apis=TEXT_APIS, **kwargs):
     )
 
 
+@detect_batch_decorator
 def analyze_image(image, apis=IMAGE_APIS, **kwargs):
     """
     Given input image, returns the results of specified image apis. Possible apis

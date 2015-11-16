@@ -1,6 +1,10 @@
 from indicoio.utils.image import image_preprocess
 from indicoio.utils.api import api_handler
+from indicoio.utils.decorators import detect_batch_decorator
 
+
+
+@detect_batch_decorator
 def facial_features(image, cloud=None, batch=False, api_key=None, version=None, **kwargs):
     """
     Given an grayscale input image of a face, returns a 48 dimensional feature vector explaining that face.
@@ -27,6 +31,8 @@ def facial_features(image, cloud=None, batch=False, api_key=None, version=None, 
     url_params = {"batch": batch, "api_key": api_key, "version": version}
     return api_handler(image, cloud=cloud, api="facialfeatures", url_params=url_params, **kwargs)
 
+
+@detect_batch_decorator
 def image_features(image, cloud=None, batch=False, api_key=None, version=None, **kwargs):
     """
     Given an input image, returns a 2048 dimensional sparse feature vector explaining that image.

@@ -10,13 +10,8 @@ from six import PY3
 
 from indicoio import config
 from indicoio import political, sentiment, fer, facial_features, facial_localization, content_filtering, language, image_features, text_tags
-from indicoio import batch_political, batch_sentiment, batch_fer, batch_content_filtering, batch_facial_features
-from indicoio import batch_language, batch_image_features, batch_text_tags
-from indicoio import keywords, batch_keywords
-from indicoio import sentiment_hq, batch_sentiment_hq
-from indicoio import twitter_engagement, batch_twitter_engagement
-from indicoio import named_entities, batch_named_entities
-from indicoio import intersections, analyze_image, analyze_text, batch_analyze_image, batch_analyze_text
+from indicoio import keywords, sentiment_hq, twitter_engagement, named_entities, intersections, analyze_image, analyze_text
+
 from indicoio.utils.errors import IndicoError
 
 DIR = os.path.dirname(os.path.realpath(__file__))
@@ -119,19 +114,6 @@ class BatchAPIRun(unittest.TestCase):
         self.assertTrue(isinstance(response, list))
         self.assertTrue(isinstance(response[0], list))
         self.assertEqual(len(response[0]), 48)
-
-    # TODO: uncomment this test once the remote server is updated to
-    # deal with image_urls
-    # def test_batch_image_urls(self):
-    #     test_data = ['http://textfac.es/static/ico/favicon.png',
-    #                  'http://textfac.es/static/ico/favicon.png']
-    #     response = batch_facial_features(test_data, auth=self.auth)
-    #     self.assertTrue(isinstance(response, list))
-    #     self.assertTrue(isinstance(response[0], list))
-    #     self.assertEqual(len(response[0]), 48)
-
-    # TODO: add tests to test when one url is incorrect once we
-    # have decided how we are dealing with them
 
     def test_batch_image_features_greyscale(self):
         test_data = [os.path.normpath(os.path.join(DIR, "data/48by48.png"))]
@@ -342,7 +324,7 @@ class FullAPIRun(unittest.TestCase):
 
     def test_batch_twitter_engagement(self):
         test_string = "Worst song ever."
-        response = batch_twitter_engagement([test_string, test_string])
+        response = twitter_engagement([test_string, test_string])
 
         self.assertTrue(isinstance(response, list))
         self.assertIsInstance(response[0], float)

@@ -1,6 +1,9 @@
 from indicoio.utils.image import image_preprocess
 from indicoio.utils.api import api_handler
+from indicoio.utils.decorators import detect_batch_decorator
 
+
+@detect_batch_decorator
 def image_recognition(image, cloud=None, batch=False, api_key=None, version=None, **kwargs):
     """
     Given an input image, returns a dictionary of image classifications with associated scores

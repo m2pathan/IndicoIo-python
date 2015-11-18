@@ -219,6 +219,7 @@ def collections(cloud=None, api_key=None, version=None, **kwargs):
             'status': 'training'
           }
         }
-      """
-      url_params = {"batch": False, "api_key": api_key, "version": version, "method": "collections"}
-      return api_handler(None, cloud=cloud, api="custom", url_params=url_params, private=True, **kwargs)
+      }
+    """
+    url_params = {"batch": False, "api_key": api_key, "version": version, "method": "collections"}
+    return api_handler(None, cloud=cloud, api="custom", url_params=url_params, private=True, **kwargs)

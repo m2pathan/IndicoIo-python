@@ -564,11 +564,6 @@ class FullAPIRun(unittest.TestCase):
 
         config.cloud = temp_cloud
 
-        self.assertRaises(ConnectionError,
-                          language,
-                          test_data,
-                          cloud='indico-test')
-
     def test_set_api_key(self):
         test_data = 'clearly an english sentence'
         self.assertRaises(IndicoError,

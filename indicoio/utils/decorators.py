@@ -1,5 +1,9 @@
 from functools import wraps
 
+
+def detect_batch(data):
+    return isinstance(data, list)
+
 def detect_batch_decorator(f):
     @wraps(f)
     def wrapper(*args, **kwargs):

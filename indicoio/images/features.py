@@ -33,7 +33,7 @@ def facial_features(image, cloud=None, batch=False, api_key=None, version=None, 
 
 
 @detect_batch_decorator
-def image_features(image, cloud=None, batch=False, api_key=None, version=None, **kwargs):
+def image_features(image, cloud=None, batch=False, api_key=None, version=2, **kwargs):
     """
     Given an input image, returns a 2048 dimensional sparse feature vector explaining that image.
     Useful as a form of feature engineering for image oriented tasks.

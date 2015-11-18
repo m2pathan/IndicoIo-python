@@ -17,6 +17,8 @@ from indicoio.text.lang import language
 from indicoio.text.tagging import text_tags
 from indicoio.text.keywords import keywords
 from indicoio.text.ner import named_entities
+from indicoio.text.personality import personality
+from indicoio.text.personas import personas
 from indicoio.images.fer import fer
 from indicoio.images.features import facial_features, image_features
 from indicoio.images.faciallocalization import facial_localization

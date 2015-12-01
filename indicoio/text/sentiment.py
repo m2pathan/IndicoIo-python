@@ -1,5 +1,8 @@
 from indicoio.utils.api import api_handler
+from indicoio.utils.decorators import detect_batch_decorator
 
+
+@detect_batch_decorator
 def political(text, cloud=None, batch=False, api_key=None, version=None, **kwargs):
     """
     Given input text, returns a probability distribution over the political alignment of the speaker.
@@ -28,6 +31,8 @@ def political(text, cloud=None, batch=False, api_key=None, version=None, **kwarg
     url_params = {"batch": batch, "api_key": api_key, "version": version}
     return api_handler(text, cloud=cloud, api="political", url_params=url_params, **kwargs)
 
+
+@detect_batch_decorator
 def posneg(text, cloud=None, batch=False, api_key=None, version=None, **kwargs):
     """
     Given input text, returns a scalar estimate of the sentiment of that text.
@@ -51,6 +56,8 @@ def posneg(text, cloud=None, batch=False, api_key=None, version=None, **kwargs):
     url_params = {"batch": batch, "api_key": api_key, "version": version}
     return api_handler(text, cloud=cloud, api="sentiment", url_params=url_params, **kwargs)
 
+
+@detect_batch_decorator
 def sentiment_hq(text, cloud=None, batch=False, api_key=None, version=None, **kwargs):
     """
     Given input text, returns a scalar estimate of the sentiment of that text.

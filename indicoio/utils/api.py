@@ -48,13 +48,17 @@ def create_url(host, api, url_params):
     is_batch = url_params.get("batch")
     apis = url_params.get("apis")
     version = url_params.get("version") or url_params.get("v")
+    method = url_params.get('method')
 
     host_url_seg = config.url_protocol + "//%s" % host
     api_url_seg = "/%s" % api
     batch_url_seg = "/batch" if is_batch else ""
+    method_url_seg = "/%s" % method if method else ""
     key_url_seg = "?key=%s" % api_key
     multi_url_seg = "&apis=%s" % ",".join(apis) if apis else ""
     version_seg = ("&version=%s" % str(version)) if version else ""
 
-    return host_url_seg + api_url_seg + batch_url_seg + key_url_seg \
-            + multi_url_seg + version_seg
+    return (
+        host_url_seg + api_url_seg + batch_url_seg + method_url_seg +
+        key_url_seg + multi_url_seg + version_seg
+    )

@@ -1,5 +1,8 @@
 from indicoio.utils.api import api_handler
+from indicoio.utils.decorators import detect_batch_decorator
 
+
+@detect_batch_decorator
 def text_tags(text, cloud=None, batch=False, api_key=None, version=None, **kwargs):
     """
     Given input text, returns a probability distribution over 100 document categories

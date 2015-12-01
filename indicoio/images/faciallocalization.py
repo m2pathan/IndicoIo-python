@@ -1,7 +1,9 @@
 from indicoio.utils.image import image_preprocess
 from indicoio.utils.api import api_handler
+from indicoio.utils.decorators import detect_batch_decorator
 
 
+@detect_batch_decorator
 def facial_localization(image, cloud=None, batch=False, api_key=None, version=None, **kwargs):
     """
     Given an image, returns a list of faces found within the image.

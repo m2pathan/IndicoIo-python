@@ -1,5 +1,8 @@
 from indicoio.utils.api import api_handler
+from indicoio.utils.decorators import detect_batch_decorator
 
+
+@detect_batch_decorator
 def named_entities(text, cloud=None, batch=False, api_key=None, version=None, **kwargs):
     """
     Given input text, returns named entities (proper nouns) found in the text

@@ -1,6 +1,9 @@
 from indicoio.utils.api import api_handler
 from indicoio.utils.image import image_preprocess
+from indicoio.utils.decorators import detect_batch_decorator
 
+
+@detect_batch_decorator
 def fer(image, cloud=None, batch=False, api_key=None, version=None, **kwargs):
     """
     Given a grayscale input image of a face, returns a probability distribution over emotional state.

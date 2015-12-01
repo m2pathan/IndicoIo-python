@@ -460,14 +460,6 @@ class FullAPIRun(unittest.TestCase):
         self.assertEqual(len(response), 48)
         self.check_range(response)
 
-    def test_image_url(self):
-        test_face = 'http://oempromo.com/upload/prod_688/foam-smiley-face-mitt--12--_35306410.jpg'
-        response = facial_features(test_face)
-
-        self.assertTrue(isinstance(response, list))
-        self.assertEqual(len(response), 48)
-        self.check_range(response)
-
     def test_good_image_features_greyscale(self):
         test_image = os.path.normpath(os.path.join(DIR, "data/48by48.png"))
         response = image_features(test_image)

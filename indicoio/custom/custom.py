@@ -88,10 +88,10 @@ class Collection(object):
         data - String: The text example being provided to the API. As a general rule, the data should be as
           similar to the examples given to the train function (above) as possible. Because language
           in different domains is used very differently the accuracy will generally drop as the
-          difference between this text and the training text increases. Base64 encoded image data, image urls, and 
+          difference between this text and the training text increases. Base64 encoded image data, image urls, and
           text content are all valid.
         domain (optional) - String: This is an identifier that helps determine the appropriate techniques for indico
-          to use behind the scenes to train your model.  One of {"standard", "topics"}.  
+          to use behind the scenes to train your model.  One of {"standard", "topics"}.
         collection (optional) - String: This is an identifier for the particular model to use for prediction. The
           response format for the given label will match the format of the training examples
         api_key (optional) - String: Your API key, required only if the key has not been declared
@@ -189,19 +189,19 @@ class Collection(object):
 
 
 def collections(cloud=None, api_key=None, version=None, **kwargs):
-      """
-      This is a status report endpoint. It is used to get the status on all of the collections currently trained, as
-      well as some basic statistics on their accuracies.
+    """
+    This is a status report endpoint. It is used to get the status on all of the collections currently trained, as
+    well as some basic statistics on their accuracies.
 
-      Inputs
-      api_key (optional) - String: Your API key, required only if the key has not been declared
-        elsewhere. This allows the API to recognize a request as yours and automatically route it
-        to the appropriate destination.
-      cloud (optional) - String: Your private cloud domain, required only if the key has not been declared
-        elsewhere. This allows the API to recognize a request as yours and automatically route it
-        to the appropriate destination.
+    Inputs
+    api_key (optional) - String: Your API key, required only if the key has not been declared
+      elsewhere. This allows the API to recognize a request as yours and automatically route it
+      to the appropriate destination.
+    cloud (optional) - String: Your private cloud domain, required only if the key has not been declared
+      elsewhere. This allows the API to recognize a request as yours and automatically route it
+      to the appropriate destination.
 
-      Example usage:
+    Example usage:
 
       .. code-block:: python
 

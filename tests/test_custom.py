@@ -14,6 +14,7 @@ image_test_data = [
     ['https://i.imgur.com/XhUDCMP.jpg', 'cat']
 ]
 
+
 class CustomAPIsTestCase(unittest.TestCase):
 
     def tearDown(self):

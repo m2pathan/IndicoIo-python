@@ -26,7 +26,7 @@ def api_handler(arg, cloud, api, url_params=None, **kwargs):
     host = "%s.indico.domains" % cloud if cloud else config.PUBLIC_API_HOST
 
     url = create_url(host, api, dict(kwargs, **url_params))
-    response = requests.post(url, data=json_data, headers=JSON_HEADERS, verify=False)
+    response = requests.post(url, data=json_data, headers=JSON_HEADERS)
 
     warning = response.headers.get('x-warning')
     if warning:

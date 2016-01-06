@@ -11,7 +11,7 @@ from six import PY3
 from indicoio import config
 from indicoio import political, sentiment, fer, facial_features, facial_localization, content_filtering, language, image_features, text_tags
 from indicoio import keywords, sentiment_hq, twitter_engagement, named_entities, intersections, analyze_image, analyze_text
-from indicoio import personas, personality, relevance, people, places, organizations
+from indicoio import personas, personality, relevance, people, places, organizations, text_features
 from indicoio.utils.errors import IndicoError
 
 DIR = os.path.dirname(os.path.realpath(__file__))
@@ -179,6 +179,20 @@ class BatchAPIRun(unittest.TestCase):
         self.assertEqual(len(response), 2)
         self.assertEqual(len(response[0]), 2)
         self.assertEqual(len(response[1]), 2)
+
+    def test_text_features(self):
+        test_data = 'Queen of England'
+        response = text_features(test_data)
+        self.assertTrue(isinstance(response, list))
+        self.assertEqual(len(response), 300)
+
+    def test_batch_text_features(self):
+        test_data = ['Queen of England', 'Prime Minister of Canada'
+        response = text_features(test_data)
+        self.assertTrue(isinstance(response, list))
+        self.assertEqual(len(response), 2)
+        self.assertEqual(len(response[0]), 300)
+        self.assertEqual(len(response[1]), 300)
 
     def test_people(self):
         test_data = 'Barack Obama is scheduled to give a talk next Saturday at the White House.'

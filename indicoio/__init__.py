@@ -20,6 +20,7 @@ from indicoio.text.ner import named_entities, people, places, organizations
 from indicoio.text.personality import personality
 from indicoio.text.personas import personas
 from indicoio.text.relevance import relevance
+from indicoio.text.text_features import text_features
 from indicoio.images.fer import fer
 from indicoio.images.features import facial_features, image_features
 from indicoio.images.faciallocalization import facial_localization

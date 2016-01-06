@@ -65,7 +65,8 @@ TEXT_APIS = [
     'relevance',
     'people',
     'places',
-    'organizations'
+    'organizations',
+    'text_features'
 ]
 
 IMAGE_APIS = [
